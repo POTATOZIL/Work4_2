@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>AR Cat Interaction: Click to Spin & Sound</title>
+    <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
+</head>
+<body>
+
+    <a-scene
+        vr-mode-ui="enabled: false"
+        arjs="sourceType: webcam; videoTexture: true; debugUIEnabled: false;"
+        renderer="antialias: true; alpha: true">
+
+        <a-assets>
+            <audio id="sound" src="bye.mp3" preload="auto"></audio>
+            
+            </a-assets>
+
+
+        <a-entity
+            id="cat-entity"
+            class="clickable"
+            gltf-model="url(scene.gltf)"
+            scale="0.25 0.25 0.25"
+            rotation="0 90 0"
+            position="0 1 -5"
+            animation="property: rotation; from: 0 90 0; to: 0 450 0; loop: true; dur: 500; easing: easeInOutQuad; startEvents: click">
+
+            <a-sound 
+                src="#sound" 
+                autoplay="false"
+                poolSize="3"> 
+            </a-sound>
+
+        </a-entity>
+        <a-camera look-controls wasd-controls position="0 1.6 0">
+            <a-entity 
+                cursor="rayOrigin: mouse"
+                raycaster="objects: .clickable">
+            </a-entity>
+        </a-camera>
+
+    </a-scene>
+
+
+<script>
+    // 1. ค้นหาวัตถุแมวที่เราตั้ง id ไว้
+    const cat = document.querySelector('#cat-entity');
+
+    // 2. เพิ่มตัวดักจับเหตุการณ์ "คลิก" ที่ตัวแมว
+    cat.addEventListener('click', function () {
+        
+        // ค้นหา component เสียงที่ซ่อนอยู่ในตัวแมว
+        const soundComponent = this.querySelector('a-sound').components.sound;
+
+        // ถ้าเสียงกำลังเล่นอยู่ ให้หยุดก่อน (เพื่อให้กดรัวๆ ได้เริ่มใหม่ตลอด)
+        if (soundComponent.isPlaying) {
+            soundComponent.stopSound();
+        }
+        
+        // สั่งให้เล่นเสียง
+        soundComponent.playSound();
+
+        console.log('Cat clicked! Spinning and Meowing.');
+    });
+</script>
+
+</body>
+</html>
